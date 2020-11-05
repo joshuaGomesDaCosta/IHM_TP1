@@ -1,5 +1,5 @@
 
-
+/*
 class Page extends React.Component {
     // Moving objects initialization
     let t = 0
@@ -37,4 +37,4 @@ class Page extends React.Component {
     return <Canvas draw={draw} />
 }
 
-export default Page;
+export default Page;*/
