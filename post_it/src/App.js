@@ -2,14 +2,14 @@ import logo from './logo.svg';
 import './App.css';
 
 import Menu from './composants/Menu';
-import Page from './composants/Page';
 import FormNewPostIt from './composants/FormNewPostIt';
+import NotesBoard from './composants/NotesBoard';
 
 function App() {
   return (
     <div>
       <Menu />
-      <Page />
+      <NotesBoard />
       <FormNewPostIt />
     </div>
   );
