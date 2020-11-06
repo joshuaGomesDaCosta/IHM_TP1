@@ -1,5 +1,5 @@
 import React from 'react';
-import NotesBoard from './Stickies'
+import NotesBoard from './NotesBoard';
 
 const mock = [
     {
@@ -12,7 +12,7 @@ const mock = [
         "y": null,
         "w": 2,
         "h" : 2,
-        "isDraggable": false
+        "isResizable": false
       },
       "contentEditable": true,
       "timeStamp": "13 Feb 2017 2:53 PM"
@@ -27,7 +27,7 @@ const mock = [
         "y": 0,
         "w": 4,
         "h" : 4,
-        "isDraggable": false
+        "isResizable": false
       },
       "contentEditable": true,
       "timeStamp": "13 Feb 2017 2:53 PM"
@@ -41,7 +41,7 @@ export default class Page extends React.Component {
       super(props);
   
       this.state = {
-        notes: [],
+        notes: mock,
         showTape: false,
         showOutput: false,
         showTitle: true,
@@ -51,31 +51,14 @@ export default class Page extends React.Component {
         showCustomColors: false,
         showMock: false
       };
-      this.toggleValue = this.toggleValue.bind(this);
+
       this.onChange = this.onChange.bind(this);
-      this.fetchMock = this.fetchMock.bind(this);
-    }
-  
-    toggleValue(e) {
-      this.setState({
-        [e.target.name]: !this.state[e.target.name]
-      });
     }
   
     onChange(notes) {
       this.setState({
         output: JSON.stringify(notes, null, 2),
         notes
-      });
-    }
-  
-    fetchMock() {
-      this.setState({
-        showMock: true
-      }, () => {
-        this.setState({
-          notes: mock
-        });
       });
     }
   
@@ -92,33 +75,10 @@ export default class Page extends React.Component {
         };
       }
       return (
-        <div>
-          <div className="header">
-            React Stickies - Sticky Notes for React
-          </div>
           <NotesBoard
             notes={this.state.notes}
             onChange={this.onChange}
-            />
-          <div className="config">
-            <form>
-              <input type="radio" name="showCustomColors" value="show_custom_colors" checked={this.state.showCustomColors} onClick={this.toggleValue} />Custom Colors
-              <input type="radio" name="showTape" value="show_tape" checked={this.state.showTape} onClick={this.toggleValue} />Show Tape
-              <input type="radio" name="showOutput" value="show_output" checked={this.state.showOutput} onClick={this.toggleValue} />Show Output
-              <input type="radio" name="showTitle" value="show_title" checked={this.state.showTitle} onClick={this.toggleValue} />Show Title
-              <input type="radio" name="showFooter" value="show_footer" checked={this.state.showFooter} onClick={this.toggleValue} />Show Footer
-              <input type="radio" name="showMock" value="show_mock" checked={this.state.showMock} onClick={this.fetchMock} />Load Mock Data
-            </form>
-            <div className="output" style={{ display: this.state.showOutput ? 'block' : 'none' }}>
-              <label className="note-header">Output JSON</label>
-              <div>
-                <pre>
-                  {this.state.output}
-                </pre>
-              </div>
-            </div>
-          </div>
-        </div>
+        />
       );
     }
 }

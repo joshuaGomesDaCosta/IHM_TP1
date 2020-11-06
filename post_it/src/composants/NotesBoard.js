@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Editor, EditorState, ContentState } from 'draft-js';
 import moment from 'moment';
 import ContentEditable from './ContentEditable';
@@ -50,7 +50,7 @@ function transformContentState(notes) {
   return data;
 }
 
-export default class NotesBoard extends Component {
+export default class NotesBoard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -64,6 +64,7 @@ export default class NotesBoard extends Component {
     this.onLayoutChange = this.onLayoutChange.bind(this);
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
   }
+  
   componentDidMount() {
     if (this.props.notes && !this.props.notes.length) {
       this.createBlankNote();
