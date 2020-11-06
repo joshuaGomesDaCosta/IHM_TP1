@@ -50,7 +50,7 @@ function transformContentState(notes) {
   return data;
 }
 
-export default class extends Component {
+export default class NotesBoard extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -64,6 +64,11 @@ export default class extends Component {
     this.onLayoutChange = this.onLayoutChange.bind(this);
     this.onBreakpointChange = this.onBreakpointChange.bind(this);
   }
+  componentDidMount() {
+    if (this.props.notes && !this.props.notes.length) {
+      this.createBlankNote();
+    }
+  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.notes && nextProps.notes.length) {
@@ -75,6 +80,15 @@ export default class extends Component {
       colors: nextProps.colors || ['#FBE4BE', '#F7D1D1', '#E4FABC', '#CAE0FA'],
       dateFormat: nextProps.dateFormat || 'lll'
     });
+  }
+
+  generateRandomColors() {
+    const colors = this.state.colors;
+    return colors[Math.floor(Math.random() * (colors.length - 1))];
+  }
+
+  generateRandomDegree(max, min) {
+    return `${Math.floor(Math.random() * (max - min + 1)) + min}deg`;
   }
 
   handleTitleChange(html, currentNote) {
@@ -257,7 +271,7 @@ export default class extends Component {
       cols: gridProps.cols || { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 },
       rowHeight: gridProps.rowHeight || 100,
       isDraggable: gridProps.isDraggable === undefined ? true : gridProps.isDraggable,
-      isResizable: gridProps.isResizable === undefined ? false : gridProps.isResizable,
+      isResizable: gridProps.isResizable === undefined ? true : gridProps.isResizable,
       useCSSTransforms: gridProps.useCSSTransforms === undefined ? true : gridProps.useCSSTransforms,
       margin: gridProps.margin
     };
