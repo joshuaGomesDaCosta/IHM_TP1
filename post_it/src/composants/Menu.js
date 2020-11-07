@@ -1,9 +1,12 @@
 import React from 'react';
 
-class Menu extends React.Component {
-    render(){
-        return (<div>menu</div>);
-    }
+function Menu(props) {
+    return (
+        <div className="Menu">
+            <p>menu</p>
+            <button className='bAddNote' onClick={props.onAddNote}>Add a Note</button>
+        </div>
+    );
 }
 
 export default Menu;
