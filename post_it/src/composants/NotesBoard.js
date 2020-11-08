@@ -5,6 +5,7 @@ import Menu from './Menu';
 import FormNewPostIt from './FormNewPostIt';
 import Moment from 'moment';
 import ContentEditable from './ContentEditable';
+import { Editor, EditorState, ContentState } from 'draft-js';
 
 import './postIt.css'
 
@@ -20,17 +21,50 @@ function guid() {
     s4() + '-' + s4() + s4() + s4();
 }
 
+/**
+* @method: tranformEditorState
+* @desc: Tranforms the text to editor state
+**/
+function transformEditorState(notes) {
+  const notesData = notes.default || notes;
+  const data = notesData.map((note) => {
+    const text = note.default ? note.default.text : note.text || '';
+    note.editorState = note.editorState || EditorState.createWithContent(ContentState.createFromText(text));
+    return note;
+  });
+  return data;
+}
+
+/**
+* @method: transformContentState
+* @desc: Tranforms editor state to text content
+**/
+function transformContentState(notes) {
+  const clonedNotes = Object.assign([], notes);
+  const data = clonedNotes.map((note) => {
+    const text = note.editorState.getCurrentContent().getPlainText();
+    note.text = text;
+    return note;
+  });
+  return data;
+}
+
 export default class NotesBoard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      notes: [
+      dateFormat: 'lll',
+      colors: [],
+      notes: transformEditorState([
         {
           id: guid(),
           grid: { x: 0, y: 0, w: 1, h: 1 },
           title: "Hello World",
           text: 'IHM project is  WIP',
           color: 'green',
+          editorState: EditorState.createEmpty(),
+          //timeStamp: Moment().format(this.state.dateFormat),
+          contentEditable: true,
         },
         {
           id: guid(),
@@ -38,6 +72,9 @@ export default class NotesBoard extends React.Component {
           title: "IHM Project",
           text: 'take care of the UI',
           color: 'green',
+          editorState: EditorState.createEmpty(),
+          //timeStamp: Moment().format(this.state.dateFormat),
+          contentEditable: true,
         },
         {
           id: guid(),
@@ -45,12 +82,28 @@ export default class NotesBoard extends React.Component {
           title: "Coucou",
           text: 'Well done!',
           color: 'green',
+          editorState: EditorState.createEmpty(),
+          //timeStamp: Moment().format(this.state.dateFormat),
+          contentEditable: true,
         },
-      ],
+      ]),
     };
 
     this.addNote = this.addNote.bind(this);
     this.renderNote = this.renderNote.bind(this);
+    this.onLayoutChange = this.onLayoutChange.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.notes && nextProps.notes.length) {
+      this.setState({
+        notes: transformEditorState(nextProps.notes)
+      });
+    }
+    this.setState({
+      colors: [],
+      //dateFormat: nextProps.dateFormat || 'lll'
+    });
   }
 
   addNote() {
@@ -68,6 +121,9 @@ export default class NotesBoard extends React.Component {
       text: 'this a note',
       title: 'New note',
       color: 'green',
+      editorState: EditorState.createEmpty(),
+      //timeStamp: Moment().format(this.state.dateFormat),
+      contentEditable: true,
     };
     this.setState({
       // Add a new item. It must have a unique key!
@@ -119,6 +175,24 @@ export default class NotesBoard extends React.Component {
     });
   }
 
+  handleTextChange(editorState, currentNote) {
+    const notes = this.state.notes;
+    //const dateFormat = this.state.dateFormat;
+    notes.forEach((note) => {
+      if (currentNote.id === note.id) {
+        note.editorState = editorState;
+        //note.timeStamp = Moment().format(dateFormat);
+      }
+    });
+    this.setState({
+      notes
+    }, () => {
+      if (typeof this.props.onChange === 'function') {
+        this.props.onChange(transformContentState(this.state.notes), 'update');
+      }
+    });
+  }
+
   handleTitleChange(html, currentNote) {
     const notes = this.state.notes;
     notes.forEach((note) => {
@@ -131,22 +205,6 @@ export default class NotesBoard extends React.Component {
     }, () => {
       if (this.props.onTitleChange) {
         this.props.onTitleChange(html, currentNote);
-      }
-    });
-  }
-
-  handleTextChange(html, currentNote) {
-    const notes = this.state.notes;
-    notes.forEach((note) => {
-      if (currentNote.id === note.id) {
-        note.text = html.target.value;
-      }
-    });
-    this.setState({
-      notes
-    }, () => {
-      if (this.props.onTextChange) {
-        this.props.onTextChange(html, currentNote);
       }
     });
   }
@@ -164,9 +222,10 @@ export default class NotesBoard extends React.Component {
             <div className="note-close" onClick={() => this.deleteNote(note)}></div>
           </div>
           <div className="note-body">
-            <ContentEditable
-                html={note.text}
-                onChange={html => this.handleTextChange(html, note)}
+            <Editor
+              editorState={note.editorState}
+              onChange={editorState => this.handleTextChange(editorState, note)}
+              placeholder="Add your notes..."
             />
           </div>
           <div className="note-footer">
@@ -186,7 +245,7 @@ export default class NotesBoard extends React.Component {
           width={1200}
           isDraggable='true'
           isResizable='false'
-          draggableCancel="input, textarea, div.note-close"
+          draggableCancel="div.note-title, div.note-body, div.note-close"
           compactType="horizontal"
           verticalCompact="false"
         >
