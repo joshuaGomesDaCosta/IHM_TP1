@@ -1,14 +1,13 @@
 import React from 'react';
 import ReactGridLayout from 'react-grid-layout';
-import semanticUIReact from 'semantic-ui-css/semantic.min.css';
 import Menu from './Menu';
 import Moment from 'moment';
 import ContentEditable from './ContentEditable';
 import { Editor, EditorState, ContentState } from 'draft-js';
+import 'semantic-ui-css/semantic.min.css';
 
 import './postIt.css'
 
-const { Container, Divider, Dropdown, Segment, Form, Input, Modal, Button, Header, Icon, Textarea} = semanticUIReact;
 
 function guid() {
   function s4() {
@@ -40,7 +39,7 @@ function transformEditorState(notes) {
 **/
 function transformContentState(notes) {
   const clonedNotes = Object.assign([], notes);
-  const data = clonedNotes.map((note) => {
+  const data = clonedNotes.map( (note) => {
     const text = note.editorState.getCurrentContent().getPlainText();
     note.text = text;
     return note;
@@ -53,8 +52,33 @@ export default class NotesBoard extends React.Component {
     super(props);
     this.state = {
       dateFormat: 'lll',
-      showEditableBorder: this.props.showEditableBorder || true,
-      colors: [],
+      showEditableBorder: this.props.showEditableBorder || false,
+      colors: [
+        {
+          id: guid(),
+          color: "green",
+          name: "Green",
+          desc: "tache pas importante",
+        },
+        {
+          id: guid(),
+          color: "yellow",
+          name: "Yellow",
+          desc: "tache peu importante",
+        },
+        {
+          id: guid(),
+          color: "orange",
+          name: "Orange",
+          desc: "tache importante",
+        },
+        {
+          id: guid(),
+          color: "red",
+          name: "Red",
+          desc: "tache très importante",
+        },
+      ],
       notes: transformEditorState([
         {
           id: guid(),
@@ -62,7 +86,7 @@ export default class NotesBoard extends React.Component {
           title: "Hello World",
           text: 'IHM project is  WIP',
           color: 'green',
-          editorState: EditorState.createEmpty(),
+          editorState: EditorState.createWithContent(ContentState.createFromText('IHM project is  WIP')),
           //timeStamp: Moment().format(this.state.dateFormat),
           contentEditable: true,
         },
@@ -71,8 +95,8 @@ export default class NotesBoard extends React.Component {
           grid: { x: 0, y: 0, w: 1, h: 1 },
           title: "IHM Project",
           text: 'take care of the UI',
-          color: 'green',
-          editorState: EditorState.createEmpty(),
+          color: 'yellow',
+          editorState: EditorState.createWithContent(ContentState.createFromText('take care of the UI')),
           //timeStamp: Moment().format(this.state.dateFormat),
           contentEditable: true,
         },
@@ -81,15 +105,15 @@ export default class NotesBoard extends React.Component {
           grid:{ x: 0, y: 0, w: 1, h: 1 },
           title: "Coucou",
           text: 'Well done!',
-          color: 'green',
-          editorState: EditorState.createEmpty(),
+          color: 'orange',
+          editorState: EditorState.createWithContent(ContentState.createFromText('Well done!')),
           //timeStamp: Moment().format(this.state.dateFormat),
           contentEditable: true,
         },
       ]),
     };
 
-    this.addNote = this.addNote.bind(this);
+    this.handleFormAddNote = this.handleFormAddNote.bind(this);
     this.renderNote = this.renderNote.bind(this);
     this.onLayoutChange = this.onLayoutChange.bind(this);
   }
@@ -106,22 +130,22 @@ export default class NotesBoard extends React.Component {
     });
   }
 
-  addNote(newNote) {
+  handleFormAddNote(newNote) {
     const grid = {};
     const uid = guid();
     const note = {
       grid: {
         i: `${uid}`,
-        x: Infinity,
+        x: 0,
         y: Infinity, // puts it at the bottom
         w: grid.w || 1,
         h: grid.h || 1
       },
       id: uid,
-      text: newNote.text,
-      title: newNote.title,
-      color: newNote.color,
-      editorState: EditorState.createEmpty(),
+      title: newNote.title.length === 0 ? 'New note' : newNote.title,
+      text: newNote.text.length === 0 ? 'Click here to edit...' : newNote.text,
+      color: newNote.color.length === 0 ? 'green' : newNote.color,
+      editorState: EditorState.createWithContent(ContentState.createFromText(newNote.text)),
       //timeStamp: Moment().format(this.state.dateFormat),
       contentEditable: true,
     };
@@ -135,7 +159,7 @@ export default class NotesBoard extends React.Component {
     }
   }
 
-  deleteNote(currentNote) {
+  handleDeleteNote(currentNote) {
     const notes = this.state.notes;
     notes.forEach((note, index) => {
       if (currentNote.id === note.id) {
@@ -217,7 +241,7 @@ export default class NotesBoard extends React.Component {
             <div className="note-title" style={style}>
               <ContentEditable
                 html={note.title}
-                onChange={html => this.handleTitleChange(html, note)}
+                onChange={ (html) => this.handleTitleChange(html, note)}
               />
             </div>
             <div className="note-close" onClick={() => this.deleteNote(note)}></div>
@@ -238,7 +262,7 @@ export default class NotesBoard extends React.Component {
   render() {
     return (
       <div className="nimp">
-        <Menu colors={this.state.colors} onAddNote={this.addNote}/>
+        <Menu colors={this.state.colors} onFormAddNote={this.handleFormAddNote}/>
         <ReactGridLayout
           className="layout"
           cols={9}

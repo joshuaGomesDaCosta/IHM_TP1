@@ -14,7 +14,6 @@ export default class FormNewPostIt extends React.Component {
         }
         this.setOpen = this.setOpen.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     setOpen(isOpen) {
@@ -26,22 +25,14 @@ export default class FormNewPostIt extends React.Component {
         this.setState({ fields: newFields });
     };
 
-    handleSubmit (e) {
-        alert("hey");
-        this.props.onSubmit(this.state.fields);
-        /*
-        const res = await fetch({ url: 'localhost:3000', method: "POST", body: this.state.fields });
-        const data = await res.json();
-        return data;*/
-    };
-
     render() {
-        //const options = this.props.colors.map( (color) => {return { key: color, value: color, text: color }}).toArray();
-        const options = [
-            { key: 'af', value: 'af', text: 'Afghanistan' },
-            { key: 'ax', value: 'ax', text: 'Aland Islands' },
-            { key: 'al', value: 'al', text: 'Albania' },
-        ];
+        const options = this.props.colors.map( (color) => {
+            return { 
+                key: color.id,
+                value: color.color,
+                text: color.name + ': ' + color.desc,
+            }
+        });
         return (
             
             <Modal
@@ -72,12 +63,18 @@ export default class FormNewPostIt extends React.Component {
                             options={options}
                             onChange={this.handleChange}
                         />
-                        <Button
+                        <Form.Button
+                            type='submit'
                             color='green'
                             content="Create"
-                            labelPosition='right'
                             icon='checkmark'
-                            onClick={() => this.setOpen(false)}
+                            onClick={ () => {
+                                this.props.onSubmit(this.state.fields);
+                                this.setOpen(false);
+                                this.setState({
+                                    fields: { title: '', text: '', color: '' },
+                                });
+                            }}
                             positive
                         />
                     </Form>
@@ -86,7 +83,6 @@ export default class FormNewPostIt extends React.Component {
                     <Button
                         color='red'
                         content="Cancel"
-                        labelPosition='right'
                         icon='cancel'
                         onClick={() => this.setOpen(false)}
                         negative
