@@ -1,26 +1,4 @@
-/*.note {
-  background-color: yellow;
-  height: 100%;
-  
-  display: flex;
-  padding: 5px;
-  flex-flow: column wrap;
-  align-items: stretch;
-}
 
-.note-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-
-  padding-bottom: 10px;
-}
-
-
-body {
-  background-color: turquoise;
-}
-*/
 * {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -49,13 +27,6 @@ body {
   *zoom: 1;
 }
 
-
-{
-  height: 100%;
-  width: 100%;
-  position: relative;
-}
-
 /* Note styles */
 .note-wrap {
   width: 100%;
@@ -78,13 +49,9 @@ body {
   border-radius: 6px/18px 0;
   position: absolute;
 }
-.note-wrap.tape:before {
-  background: rgba(227, 200, 114, 0.4);
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-  top: -13px;
-  left: 50px;
-}
-.note-wrap .title {
+
+
+.note-title {
   color: #747474;
   text-decoration: none;
   -webkit-transition: all 0.4s ease;
@@ -93,12 +60,10 @@ body {
   -ms-transition: all 0.4s ease;
   transition: all 0.4s ease;
   position: absolute;
-  bottom: 0;
-  text-align: center;
-  width: 100%;
-  left: 0;
+  margin: 5px;
 }
-.note-wrap .title:hover {
+
+.note-title:hover {
   color: #000;
 }
 
@@ -172,6 +137,7 @@ body {
 
 .note-body {
   padding: 10px;
+  margin: 5px;
   font-size: 12px;
   color: #747474;
   line-height: 20px;

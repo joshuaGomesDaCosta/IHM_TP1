@@ -2,7 +2,6 @@ import React from 'react';
 import ReactGridLayout from 'react-grid-layout';
 import semanticUIReact from 'semantic-ui-css/semantic.min.css';
 import Menu from './Menu';
-import FormNewPostIt from './FormNewPostIt';
 import Moment from 'moment';
 import ContentEditable from './ContentEditable';
 import { Editor, EditorState, ContentState } from 'draft-js';
@@ -54,6 +53,7 @@ export default class NotesBoard extends React.Component {
     super(props);
     this.state = {
       dateFormat: 'lll',
+      showEditableBorder: this.props.showEditableBorder || true,
       colors: [],
       notes: transformEditorState([
         {
@@ -106,7 +106,7 @@ export default class NotesBoard extends React.Component {
     });
   }
 
-  addNote() {
+  addNote(newNote) {
     const grid = {};
     const uid = guid();
     const note = {
@@ -118,9 +118,9 @@ export default class NotesBoard extends React.Component {
         h: grid.h || 1
       },
       id: uid,
-      text: 'this a note',
-      title: 'New note',
-      color: 'green',
+      text: newNote.text,
+      title: newNote.title,
+      color: newNote.color,
       editorState: EditorState.createEmpty(),
       //timeStamp: Moment().format(this.state.dateFormat),
       contentEditable: true,
@@ -210,10 +210,11 @@ export default class NotesBoard extends React.Component {
   }
 
   renderNote(note) {
+    const style = this.state.showEditableBorder ? {border: 'solid 1px black'} : {};
     return (
       <div key={note.id} data-grid={note.grid} className='note'>
           <div className="note-header">
-            <div className="title">
+            <div className="note-title" style={style}>
               <ContentEditable
                 html={note.title}
                 onChange={html => this.handleTitleChange(html, note)}
@@ -221,11 +222,11 @@ export default class NotesBoard extends React.Component {
             </div>
             <div className="note-close" onClick={() => this.deleteNote(note)}></div>
           </div>
-          <div className="note-body">
+          <div className="note-body" style={style}>
             <Editor
               editorState={note.editorState}
               onChange={editorState => this.handleTextChange(editorState, note)}
-              placeholder="Add your notes..."
+              placeholder="Click here to edit..."
             />
           </div>
           <div className="note-footer">
@@ -240,18 +241,17 @@ export default class NotesBoard extends React.Component {
         <Menu onAddNote={this.addNote}/>
         <ReactGridLayout
           className="layout"
-          cols={12}
+          cols={9}
           rowHeight={100}
           width={1200}
           isDraggable='true'
-          isResizable='false'
+          isResizable='true'
           draggableCancel="div.note-title, div.note-body, div.note-close"
-          compactType="horizontal"
+          //compactType="horizontal"
           verticalCompact="false"
         >
           {this.state.notes.length !== 0 ? this.state.notes.map( this.renderNote):<p>pas de post-It</p>}
         </ReactGridLayout>
-        <FormNewPostIt />
       </div>
     );
   }

@@ -1,12 +1,11 @@
 import React from 'react';
+import FormNewPostIt from './FormNewPostIt';
 
-function Menu(props) {
+export default function Menu(props) {
     return (
         <div className="Menu">
-            <p>menu</p>
-            <button className='bAddNote' onClick={props.onAddNote}>Add a Note</button>
+            <h1>Welcome to your NoteBoard !</h1>
+            <FormNewPostIt onSubmit={props.addVote}/>
         </div>
     );
 }
-
-export default Menu;
