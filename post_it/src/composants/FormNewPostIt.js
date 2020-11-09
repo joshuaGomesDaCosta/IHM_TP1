@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Divider, Dropdown, Segment, Form, Input, Modal, Button, Header, Icon, Textarea} from 'semantic-ui-react';
+import { Form, Modal, Button} from 'semantic-ui-react';
 
 export default class FormNewPostIt extends React.Component {
     constructor(props) {
@@ -26,7 +26,8 @@ export default class FormNewPostIt extends React.Component {
         this.setState({ fields: newFields });
     };
 
-    handleSubmit () {
+    handleSubmit (e) {
+        alert("hey");
         this.props.onSubmit(this.state.fields);
         /*
         const res = await fetch({ url: 'localhost:3000', method: "POST", body: this.state.fields });
@@ -35,7 +36,12 @@ export default class FormNewPostIt extends React.Component {
     };
 
     render() {
-
+        //const options = this.props.colors.map( (color) => {return { key: color, value: color, text: color }}).toArray();
+        const options = [
+            { key: 'af', value: 'af', text: 'Afghanistan' },
+            { key: 'ax', value: 'ax', text: 'Aland Islands' },
+            { key: 'al', value: 'al', text: 'Albania' },
+        ];
         return (
             
             <Modal
@@ -46,25 +52,26 @@ export default class FormNewPostIt extends React.Component {
               >
                 <Modal.Header>Create a note</Modal.Header>
                 <Modal.Content>
-                    <Form onSubmit={() => this.handleSubmit}>
+                    <Form onSubmit={this.handleSubmit}>
                         <Form.Input 
                             label='Title'
                             name='title'
                             placeholder='title' 
-                            onChange={() => this.handleChange}
+                            onChange={this.handleChange}
                         />
                         <Form.TextArea 
                             label='Text'
                             name='text' 
                             placeholder='type the text here...'
-                            onChange={() => this.handleChange}
+                            onChange={this.handleChange}
                         />
-                        <Form.Field onChange={() => this.handleChange} label='Color' name='color' control='select'>
-                            <option value='Green'>Green</option>
-                            <option value='Yellow'>Yellow</option>
-                            <option value='Orange'>Orange</option>
-                            <option value='Red'>Red</option>
-                        </Form.Field>
+                        <Form.Select 
+                            label='Color'
+                            name='color'
+                            placeholder='Color'
+                            options={options}
+                            onChange={this.handleChange}
+                        />
                         <Button
                             color='green'
                             content="Create"

@@ -238,7 +238,7 @@ export default class NotesBoard extends React.Component {
   render() {
     return (
       <div className="nimp">
-        <Menu onAddNote={this.addNote}/>
+        <Menu colors={this.state.colors} onAddNote={this.addNote}/>
         <ReactGridLayout
           className="layout"
           cols={9}
