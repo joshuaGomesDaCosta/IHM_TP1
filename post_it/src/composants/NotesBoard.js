@@ -5,6 +5,7 @@ import Moment from 'moment';
 import ContentEditable from './ContentEditable';
 import { Editor, EditorState, ContentState } from 'draft-js';
 import 'semantic-ui-css/semantic.min.css';
+import { Modal, Button} from 'semantic-ui-react';
 
 import './postIt.css'
 
@@ -160,6 +161,7 @@ export default class NotesBoard extends React.Component {
   }
 
   handleDeleteNote(currentNote) {
+    this.setOpenConfimDelete(false);
     const notes = this.state.notes;
     notes.forEach((note, index) => {
       if (currentNote.id === note.id) {
@@ -233,27 +235,54 @@ export default class NotesBoard extends React.Component {
     });
   }
 
+  setOpenConfimDelete(isOpen) {
+    this.setState({
+      openConfirmDelete : isOpen,
+    }); 
+  }
+
+  renderClose(note){
+    return(
+      <Modal
+          onClose={() => this.setOpenConfimDelete(false)}
+          onOpen={() => this.setOpenConfimDelete(true)}
+          open={this.state.openConfirmDelete}
+          trigger={<div className='note-close'></div>}
+      >
+        <Modal.Header>Confirm the suppression</Modal.Header>
+        <Modal.Content>
+          <Button.Group>
+            <Button negative onClick={() => this.setOpenConfimDelete(false)}>Cancel</Button>
+            <Button.Or />
+            <Button positive onClick={() => this.handleDeleteNote(note)}>Confirm</Button>
+          </Button.Group>
+        </Modal.Content>
+      </Modal>
+    );
+  }
+
   renderNote(note) {
     const style = this.state.showEditableBorder ? {border: 'solid 1px black'} : {};
+    const styleColor = {backgroundColor: note.color};
     return (
-      <div key={note.id} data-grid={note.grid} className='note'>
-          <div className="note-header">
-            <div className="note-title" style={style}>
+      <div key={note.id} data-grid={note.grid} style={styleColor} className='note'>
+          <div className='note-header'>
+            <div className='note-title'>
               <ContentEditable
                 html={note.title}
                 onChange={ (html) => this.handleTitleChange(html, note)}
               />
             </div>
-            <div className="note-close" onClick={() => this.deleteNote(note)}></div>
+            {this.renderClose(note)}
           </div>
-          <div className="note-body" style={style}>
+          <div className='note-body' style={style}>
             <Editor
               editorState={note.editorState}
               onChange={editorState => this.handleTextChange(editorState, note)}
-              placeholder="Click here to edit..."
+              placeholder='Click here to edit...'
             />
           </div>
-          <div className="note-footer">
+          <div className='note-footer'>
           </div>
       </div>
     );
@@ -261,18 +290,18 @@ export default class NotesBoard extends React.Component {
 
   render() {
     return (
-      <div className="nimp">
+      <div className='nimp'>
         <Menu colors={this.state.colors} onFormAddNote={this.handleFormAddNote}/>
         <ReactGridLayout
-          className="layout"
-          cols={9}
-          rowHeight={100}
+          className='layout'
+          cols={6}
+          rowHeight={200}
           width={1200}
           isDraggable='true'
-          isResizable='true'
-          draggableCancel="div.note-title, div.note-body, div.note-close"
+          isResizable='false'
+          draggableCancel='div.note-title, div.note-body, div.note-close'
           //compactType="horizontal"
-          verticalCompact="false"
+          //verticalCompact="false"
         >
           {this.state.notes.length !== 0 ? this.state.notes.map( this.renderNote):<p>pas de post-It</p>}
         </ReactGridLayout>

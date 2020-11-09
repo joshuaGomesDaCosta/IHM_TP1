@@ -5,7 +5,7 @@ import NotesBoard from './composants/NotesBoard';
 
 function App() {
   return (
-      <NotesBoard />
+      <NotesBoard showEditableBorder={true}/>
   );
 }
 

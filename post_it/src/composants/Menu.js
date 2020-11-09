@@ -10,8 +10,9 @@ export default function Menu(props) {
     );
 }
 /* todo
+ * ajouter bouton changer couleur sur post it avec un bouton next
+ * limiter le texte
  * ajouter modal code couleur et formulaire nouvelle couleur
- * ajouter bouton changer couleur sur post it (cycle ou modal avec liste déroulante)
- * ajouter confirmation de suppression
+ * 
  * ajouter alarmes
  */
