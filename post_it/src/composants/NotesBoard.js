@@ -3,7 +3,7 @@ import ReactGridLayout from 'react-grid-layout';
 import Menu from './Menu';
 import Moment from 'moment';
 import ContentEditable from './ContentEditable';
-import { Editor, EditorState, ContentState } from 'draft-js';
+import { Editor, EditorState, ContentState, Modifier } from 'draft-js';
 import 'semantic-ui-css/semantic.min.css';
 import { Modal, Button} from 'semantic-ui-react';
 
@@ -235,6 +235,18 @@ export default class NotesBoard extends React.Component {
     });
   }
 
+  handleBeforeInput(input, currentNote) {
+    const text = currentNote.editorState.getCurrentContent().getPlainText();
+    if ( text.length > 200 || (text.match(/\n/g) || []).length > 7) {
+      return 'handled';
+    }
+  };
+
+  handlePastedText(input, currentNote) {
+    const text = currentNote.editorState.getCurrentContent().getPlainText();
+    return (input.length + text.length > 200 || (text.match(/\n/g) || []).length > 7);
+};
+
   setOpenConfimDelete(isOpen) {
     this.setState({
       openConfirmDelete : isOpen,
@@ -279,6 +291,8 @@ export default class NotesBoard extends React.Component {
             <Editor
               editorState={note.editorState}
               onChange={editorState => this.handleTextChange(editorState, note)}
+              handleBeforeInput={ input => this.handleBeforeInput(input,note)}
+              handlePastedText={ input => this.handlePastedText(input,note)}
               placeholder='Click here to edit...'
             />
           </div>
