@@ -13,7 +13,6 @@ export default function Menu(props) {
 }
 /* todo
  * améliorer la limitation du texte (utiliser Modifier et enlever les \n sup)
- * 
- * ajouter new couleur
+ * gérer supression couleur
  * ajouter alarmes
  */

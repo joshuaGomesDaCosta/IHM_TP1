@@ -238,14 +238,14 @@ export default class NotesBoard extends React.Component {
 
   handleBeforeInput(input, currentNote) {
     const text = currentNote.editorState.getCurrentContent().getPlainText();
-    if ( text.length > 200 || (text.match(/\n/g) || []).length > 7) {
+    if ( text.length >= 200 || (text.match(/\n/g) || []).length > 7) {
       return 'handled';
     }
   };
 
   handlePastedText(input, currentNote) {
     const text = currentNote.editorState.getCurrentContent().getPlainText();
-    return (input.length + text.length > 200 || (text.match(/\n/g) || []).length > 7);
+    return (input.length + text.length >= 200 || (text.match(/\n/g) || []).length > 7);
 };
 
   setOpenConfimDelete(isOpen) {
@@ -313,10 +313,10 @@ export default class NotesBoard extends React.Component {
 
   render() {
     return (
-      <div className='nimp'>
+      <div>
         <Header><Menu colors={this.state.colors} onFormAddNote={this.handleFormAddNote}/></Header>
-        <Grid>
-          <Grid.Column width={11}>
+        <Grid className="grid" columns={16}>
+          <Grid.Column width={12}>
             <Segment>
               <ReactGridLayout
                 className='layout'

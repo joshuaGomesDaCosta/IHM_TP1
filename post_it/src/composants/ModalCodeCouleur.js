@@ -161,7 +161,7 @@ export class RailCodeCouleur extends React.Component {
 
     render() {
         return (
-            <Rail position='right'>
+            <Rail close position='right'>
                 <Segment>
                     <Header>Your color code</Header>
                     <List divided relaxed>
