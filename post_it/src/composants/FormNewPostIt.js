@@ -9,7 +9,7 @@ export default class FormNewPostIt extends React.Component {
             fields: {
                 title: '',
                 text: '',
-                color: '#FFF',
+                colorId: 0,
             },
         }
         this.setOpen = this.setOpen.bind(this);
@@ -29,7 +29,7 @@ export default class FormNewPostIt extends React.Component {
         const options = this.props.colors.map( (color) => {
             return { 
                 key: color.id,
-                value: color.color,
+                value: color.id,
                 text: color.name + ': ' + color.desc,
             }
         });
@@ -39,7 +39,7 @@ export default class FormNewPostIt extends React.Component {
                 onClose={() => this.setOpen(false)}
                 onOpen={() => this.setOpen(true)}
                 open={this.state.open}
-                trigger={<Button>Create a note</Button>}
+                trigger={<Button content='Create a note'/>}
               >
                 <Modal.Header>Create a note</Modal.Header>
                 <Modal.Content>
@@ -58,7 +58,7 @@ export default class FormNewPostIt extends React.Component {
                         />
                         <Form.Select 
                             label='Color'
-                            name='color'
+                            name='colorId'
                             placeholder='Color'
                             options={options}
                             onChange={this.handleChange}
@@ -72,7 +72,7 @@ export default class FormNewPostIt extends React.Component {
                                 this.props.onSubmit(this.state.fields);
                                 this.setOpen(false);
                                 this.setState({
-                                    fields: { title: '', text: '', color: '' },
+                                    fields: { title: '', text: '', colorId: 0 },
                                 });
                             }}
                             positive

@@ -5,7 +5,8 @@ import Moment from 'moment';
 import ContentEditable from './ContentEditable';
 import { Editor, EditorState, ContentState, Modifier } from 'draft-js';
 import 'semantic-ui-css/semantic.min.css';
-import { Modal, Button} from 'semantic-ui-react';
+import { Grid, Segment, Modal, Button, Icon, Header} from 'semantic-ui-react';
+import {RailCodeCouleur} from './ModalCodeCouleur';
 
 import './postIt.css'
 
@@ -56,25 +57,25 @@ export default class NotesBoard extends React.Component {
       showEditableBorder: this.props.showEditableBorder || false,
       colors: [
         {
-          id: guid(),
+          id: 0,
           color: "green",
           name: "Green",
           desc: "tache pas importante",
         },
         {
-          id: guid(),
+          id: 1,
           color: "yellow",
           name: "Yellow",
           desc: "tache peu importante",
         },
         {
-          id: guid(),
+          id: 2,
           color: "orange",
           name: "Orange",
           desc: "tache importante",
         },
         {
-          id: guid(),
+          id: 3,
           color: "red",
           name: "Red",
           desc: "tache très importante",
@@ -86,7 +87,7 @@ export default class NotesBoard extends React.Component {
           grid: { x: 0, y: 0, w: 1, h: 1 },
           title: "Hello World",
           text: 'IHM project is  WIP',
-          color: 'green',
+          colorId: 0,
           editorState: EditorState.createWithContent(ContentState.createFromText('IHM project is  WIP')),
           //timeStamp: Moment().format(this.state.dateFormat),
           contentEditable: true,
@@ -96,7 +97,7 @@ export default class NotesBoard extends React.Component {
           grid: { x: 0, y: 0, w: 1, h: 1 },
           title: "IHM Project",
           text: 'take care of the UI',
-          color: 'yellow',
+          colorId: 1,
           editorState: EditorState.createWithContent(ContentState.createFromText('take care of the UI')),
           //timeStamp: Moment().format(this.state.dateFormat),
           contentEditable: true,
@@ -106,7 +107,7 @@ export default class NotesBoard extends React.Component {
           grid:{ x: 0, y: 0, w: 1, h: 1 },
           title: "Coucou",
           text: 'Well done!',
-          color: 'orange',
+          colorId: 2,
           editorState: EditorState.createWithContent(ContentState.createFromText('Well done!')),
           //timeStamp: Moment().format(this.state.dateFormat),
           contentEditable: true,
@@ -145,7 +146,7 @@ export default class NotesBoard extends React.Component {
       id: uid,
       title: newNote.title.length === 0 ? 'New note' : newNote.title,
       text: newNote.text.length === 0 ? 'Click here to edit...' : newNote.text,
-      color: newNote.color.length === 0 ? 'green' : newNote.color,
+      colorId: newNote.colorId.length === null ? 0 : newNote.colorId,
       editorState: EditorState.createWithContent(ContentState.createFromText(newNote.text)),
       //timeStamp: Moment().format(this.state.dateFormat),
       contentEditable: true,
@@ -259,7 +260,7 @@ export default class NotesBoard extends React.Component {
           onClose={() => this.setOpenConfimDelete(false)}
           onOpen={() => this.setOpenConfimDelete(true)}
           open={this.state.openConfirmDelete}
-          trigger={<div className='note-close'></div>}
+          trigger={<div className='note-close'><Icon name='close'/></div>}
       >
         <Modal.Header>Confirm the suppression</Modal.Header>
         <Modal.Content>
@@ -275,7 +276,7 @@ export default class NotesBoard extends React.Component {
 
   renderNote(note) {
     const style = this.state.showEditableBorder ? {border: 'solid 1px black'} : {};
-    const styleColor = {backgroundColor: note.color};
+    const styleColor = {backgroundColor: this.state.colors[note.colorId].color};
     return (
       <div key={note.id} data-grid={note.grid} style={styleColor} className='note'>
           <div className='note-header'>
@@ -284,6 +285,14 @@ export default class NotesBoard extends React.Component {
                 html={note.title}
                 onChange={ (html) => this.handleTitleChange(html, note)}
               />
+            </div>
+            <div className='note-nextColor'>
+              <Icon name='sync' onClick={ () => {
+                note.colorId = (note.colorId + 1) % this.state.colors.length;
+                this.setState({
+                  notes: this.state.notes,
+                });
+              }}/>
             </div>
             {this.renderClose(note)}
           </div>
@@ -305,20 +314,27 @@ export default class NotesBoard extends React.Component {
   render() {
     return (
       <div className='nimp'>
-        <Menu colors={this.state.colors} onFormAddNote={this.handleFormAddNote}/>
-        <ReactGridLayout
-          className='layout'
-          cols={6}
-          rowHeight={200}
-          width={1200}
-          isDraggable='true'
-          isResizable='false'
-          draggableCancel='div.note-title, div.note-body, div.note-close'
-          //compactType="horizontal"
-          //verticalCompact="false"
-        >
-          {this.state.notes.length !== 0 ? this.state.notes.map( this.renderNote):<p>pas de post-It</p>}
-        </ReactGridLayout>
+        <Header><Menu colors={this.state.colors} onFormAddNote={this.handleFormAddNote}/></Header>
+        <Grid>
+          <Grid.Column width={11}>
+            <Segment>
+              <ReactGridLayout
+                className='layout'
+                cols={6}
+                rowHeight={200}
+                width={1200}
+                isDraggable='true'
+                isResizable='false'
+                draggableCancel='div.note-title, div.note-body, div.note-close, div.note-nextColor'
+                //compactType="horizontal"
+                //verticalCompact="false"
+              >
+                {this.state.notes.length !== 0 ? this.state.notes.map( this.renderNote):<p>pas de post-It</p>}
+              </ReactGridLayout>
+              <RailCodeCouleur colors={this.state.colors}/>
+            </Segment>
+          </Grid.Column>
+        </Grid>
       </div>
     );
   }
