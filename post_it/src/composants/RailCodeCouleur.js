@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextArea, Form, Icon, Rail, Segment, List, Modal, Button, Header} from 'semantic-ui-react';
+import { Portal, TextArea, Form, Icon, Rail, Segment, List, Modal, Button, Header} from 'semantic-ui-react';
 import ConfirmModal from './ConfirmModal';
 
 import 'semantic-ui-css/semantic.min.css';
@@ -25,11 +25,18 @@ export default class RailCodeCouleur extends React.Component {
         this.setState({ openFormAdd: isOpen });
     }
 
+
     handleChange(e, color) {
-        color.desc=e.target.value;
-        this.setState({
-            colors: this.state.colors,
-        });
+        const text = e.target.value;
+        const array = text.split('\n');
+        let lines = array.length;
+
+        if (lines < 2) {
+            color.desc=text;
+            this.setState({
+                colors: this.state.colors,
+            });
+        }
     };
 
     handleFormAddChange(e, {name, value}) {
@@ -64,7 +71,7 @@ export default class RailCodeCouleur extends React.Component {
             });
         }
         else {
-            alert('not allowed');
+            alert("You can't delete a color used !");
         }
     }
 
@@ -79,18 +86,21 @@ export default class RailCodeCouleur extends React.Component {
                 <Modal.Header>Create a color</Modal.Header>
                 <Modal.Content>
                     <Form onSubmit={this.handleSubmit}>
-                        <Form.Input 
-                            label='Name'
-                            name='name'
-                            placeholder='Name of your color' 
-                            onChange={this.handleFormAddChange}
-                        />
-                        <Form.Input 
-                            label='Color'
-                            name='color' 
-                            placeholder='exemple: #FFFF00'
-                            onChange={this.handleFormAddChange}
-                        />
+                        <Form.Group>
+                            <Form.Input 
+                                label='Name'
+                                name='name'
+                                placeholder='Name of your color' 
+                                onChange={this.handleFormAddChange}
+                            />
+                            <Form.Input
+                                label='Select a Color'
+                                type='color'
+                                name='color'
+                                value='#ff00ff'
+                                onChange={this.handleFormAddChange}
+                            />
+                        </Form.Group>
                         <Form.Input 
                             label='Description'
                             name='desc' 
@@ -165,6 +175,7 @@ export default class RailCodeCouleur extends React.Component {
                                         <List.Description>
                                             <TextArea
                                                 className='editable'
+                                                placeholder='description...'
                                                 rows={1}
                                                 maxLength={40}
                                                 value={color.desc}
