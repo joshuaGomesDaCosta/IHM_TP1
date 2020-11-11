@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Modal, Button} from 'semantic-ui-react';
+import {Form, Modal, Button} from 'semantic-ui-react';
 
 export default class FormNewPostIt extends React.Component {
     constructor(props) {
@@ -30,7 +30,9 @@ export default class FormNewPostIt extends React.Component {
             return { 
                 key: color.id,
                 value: color.id,
-                text: color.name + ': ' + color.desc,
+                text: color.name,
+                description: color.desc,
+                label: { style: {backgroundColor:color.color}, empty: true, circular: true },
             }
         });
         return (
@@ -39,8 +41,8 @@ export default class FormNewPostIt extends React.Component {
                 onClose={() => this.setOpen(false)}
                 onOpen={() => this.setOpen(true)}
                 open={this.state.open}
-                trigger={<Button content='Create a note'/>}
-              >
+                trigger={<Button color='blue' icon='add' content='Create a note'/>}
+            >
                 <Modal.Header>Create a note</Modal.Header>
                 <Modal.Content>
                     <Form onSubmit={this.handleSubmit}>
@@ -59,8 +61,8 @@ export default class FormNewPostIt extends React.Component {
                         <Form.Select 
                             label='Color'
                             name='colorId'
-                            placeholder='Color'
                             options={options}
+                            defaultValue={0}
                             onChange={this.handleChange}
                         />
                         <Form.Button
@@ -84,9 +86,9 @@ export default class FormNewPostIt extends React.Component {
                         color='red'
                         content="Cancel"
                         icon='cancel'
-                        onClick={() => this.setOpen(false)}
+                        onClick={ () => this.setOpen(false)}
                         negative
-                    />       
+                    />
                 </Modal.Actions>
             </Modal>
         );

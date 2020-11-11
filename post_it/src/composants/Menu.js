@@ -1,18 +1,23 @@
 import React from 'react';
 import FormNewPostIt from './FormNewPostIt';
-import ModalCodeCouleur from './ModalCodeCouleur';
+import {Icon, List} from 'semantic-ui-react';
 
 export default function Menu(props) {
     return (
         <div className="Menu">
             <h1>Welcome to your NoteBoard !</h1>
             <FormNewPostIt colors={props.colors} onSubmit={(fields) => props.onFormAddNote(fields)}/>
-            <ModalCodeCouleur colors={props.colors}/>
+            Icons list :
+            <List celled horizontal>
+                <List.Item><Icon name="pencil"/>edit color</List.Item>
+                <List.Item><Icon name="edit"/>indicates editable text</List.Item>
+                <List.Item><Icon name="close"/>delete</List.Item>
+                <List.Item><Icon name="add"/>create</List.Item>
+            </List>
         </div>
     );
 }
 /* todo
- * améliorer la limitation du texte (utiliser Modifier et enlever les \n sup)
- * gérer supression couleur
+ * améliorer ui (zone editable pas claire, zone draggable trop fine quand le post-it est surchargé,)
  * ajouter alarmes
  */

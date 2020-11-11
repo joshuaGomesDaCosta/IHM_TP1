@@ -2,52 +2,13 @@ import React from 'react';
 import ReactGridLayout from 'react-grid-layout';
 import Menu from './Menu';
 import Moment from 'moment';
-import ContentEditable from './ContentEditable';
 import { Editor, EditorState, ContentState, Modifier } from 'draft-js';
+import { Dropdown, Input, Grid, Segment, Icon, Header, TextArea} from 'semantic-ui-react';
+import RailCodeCouleur from './RailCodeCouleur';
+import ConfirmModal from './ConfirmModal';
+
 import 'semantic-ui-css/semantic.min.css';
-import { Grid, Segment, Modal, Button, Icon, Header} from 'semantic-ui-react';
-import {RailCodeCouleur} from './ModalCodeCouleur';
-
-import './postIt.css'
-
-
-function guid() {
-  function s4() {
-    return Math.floor((1 + Math.random()) * 0x10000)
-      .toString(16)
-      .substring(1);
-  }
-  return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-    s4() + '-' + s4() + s4() + s4();
-}
-
-/**
-* @method: tranformEditorState
-* @desc: Tranforms the text to editor state
-**/
-function transformEditorState(notes) {
-  const notesData = notes.default || notes;
-  const data = notesData.map((note) => {
-    const text = note.default ? note.default.text : note.text || '';
-    note.editorState = note.editorState || EditorState.createWithContent(ContentState.createFromText(text));
-    return note;
-  });
-  return data;
-}
-
-/**
-* @method: transformContentState
-* @desc: Tranforms editor state to text content
-**/
-function transformContentState(notes) {
-  const clonedNotes = Object.assign([], notes);
-  const data = clonedNotes.map( (note) => {
-    const text = note.editorState.getCurrentContent().getPlainText();
-    note.text = text;
-    return note;
-  });
-  return data;
-}
+import './style.css';
 
 export default class NotesBoard extends React.Component {
   constructor(props) {
@@ -81,49 +42,28 @@ export default class NotesBoard extends React.Component {
           desc: "tache très importante",
         },
       ],
-      notes: transformEditorState([
+      notes: [
         {
-          id: guid(),
+          id: 0,
           grid: { x: 0, y: 0, w: 1, h: 1 },
-          title: "Hello World",
-          text: 'IHM project is  WIP',
+          title: "Hello",
+          text: 'You can edit and drag your post-it',
           colorId: 0,
-          editorState: EditorState.createWithContent(ContentState.createFromText('IHM project is  WIP')),
           //timeStamp: Moment().format(this.state.dateFormat),
           contentEditable: true,
         },
-        {
-          id: guid(),
-          grid: { x: 0, y: 0, w: 1, h: 1 },
-          title: "IHM Project",
-          text: 'take care of the UI',
-          colorId: 1,
-          editorState: EditorState.createWithContent(ContentState.createFromText('take care of the UI')),
-          //timeStamp: Moment().format(this.state.dateFormat),
-          contentEditable: true,
-        },
-        {
-          id: guid(),
-          grid:{ x: 0, y: 0, w: 1, h: 1 },
-          title: "Coucou",
-          text: 'Well done!',
-          colorId: 2,
-          editorState: EditorState.createWithContent(ContentState.createFromText('Well done!')),
-          //timeStamp: Moment().format(this.state.dateFormat),
-          contentEditable: true,
-        },
-      ]),
+      ],
     };
 
     this.handleFormAddNote = this.handleFormAddNote.bind(this);
+
     this.renderNote = this.renderNote.bind(this);
-    this.onLayoutChange = this.onLayoutChange.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.notes && nextProps.notes.length) {
       this.setState({
-        notes: transformEditorState(nextProps.notes)
+        notes: nextProps.notes
       });
     }
     this.setState({
@@ -134,7 +74,7 @@ export default class NotesBoard extends React.Component {
 
   handleFormAddNote(newNote) {
     const grid = {};
-    const uid = guid();
+    const uid = this.state.notes.length;
     const note = {
       grid: {
         i: `${uid}`,
@@ -147,7 +87,6 @@ export default class NotesBoard extends React.Component {
       title: newNote.title.length === 0 ? 'New note' : newNote.title,
       text: newNote.text.length === 0 ? 'Click here to edit...' : newNote.text,
       colorId: newNote.colorId.length === null ? 0 : newNote.colorId,
-      editorState: EditorState.createWithContent(ContentState.createFromText(newNote.text)),
       //timeStamp: Moment().format(this.state.dateFormat),
       contentEditable: true,
     };
@@ -161,61 +100,21 @@ export default class NotesBoard extends React.Component {
     }
   }
 
-  handleDeleteNote(currentNote) {
-    this.setOpenConfimDelete(false);
-    const notes = this.state.notes;
-    notes.forEach((note, index) => {
-      if (currentNote.id === note.id) {
-        notes.splice(index, 1);
+  handleDeleteNote(noteId) {
+    this.state.notes.splice(noteId, 1);;
+    this.state.notes.forEach((note) => {
+      if (note.id > noteId) {
+        note.id--;
       }
     });
     this.setState({
-      notes
+      notes: this.state.notes
     }, () => {
       if (typeof this.props.onChange === 'function') {
         this.props.onChange(this.state.notes, 'delete');
         if (typeof this.props.onDelete === 'function') {
-          this.props.onDelete(currentNote);
+          this.props.onDelete(noteId);
         }
-      }
-    });
-  }
-
-  onLayoutChange(layout) {
-    const notes = this.state.notes;
-    notes.forEach((note) => {
-      layout.forEach((grid) => {
-        if (grid.i === note.id) {
-          note.grid = grid;
-        }
-      });
-    });
-    this.setState({
-      notes
-    }, () => {
-      if (typeof this.props.onChange === 'function') {
-        this.props.onChange(this.state.notes, 'layout');
-        if (typeof this.props.onLayoutChange === 'function') {
-          this.props.onLayoutChange(layout);
-        }
-      }
-    });
-  }
-
-  handleTextChange(editorState, currentNote) {
-    const notes = this.state.notes;
-    //const dateFormat = this.state.dateFormat;
-    notes.forEach((note) => {
-      if (currentNote.id === note.id) {
-        note.editorState = editorState;
-        //note.timeStamp = Moment().format(dateFormat);
-      }
-    });
-    this.setState({
-      notes
-    }, () => {
-      if (typeof this.props.onChange === 'function') {
-        this.props.onChange(transformContentState(this.state.notes), 'update');
       }
     });
   }
@@ -236,43 +135,61 @@ export default class NotesBoard extends React.Component {
     });
   }
 
-  handleBeforeInput(input, currentNote) {
-    const text = currentNote.editorState.getCurrentContent().getPlainText();
-    if ( text.length >= 200 || (text.match(/\n/g) || []).length > 7) {
-      return 'handled';
+  handleTextAreaChange(e, currentNote) {
+    const text = e.target.value;
+    const array = text.split('\n');
+    let lines = array.length;
+
+    array.forEach(el => {
+      lines += Math.floor(el.length / 20);
+    });
+
+    if (lines < 10) {
+      currentNote.text = text;
+      currentNote.lines = lines;
+      this.setState({
+        notes: this.state.notes,
+      })
     }
-  };
-
-  handlePastedText(input, currentNote) {
-    const text = currentNote.editorState.getCurrentContent().getPlainText();
-    return (input.length + text.length >= 200 || (text.match(/\n/g) || []).length > 7);
-};
-
-  setOpenConfimDelete(isOpen) {
-    this.setState({
-      openConfirmDelete : isOpen,
-    }); 
   }
 
-  renderClose(note){
+  handleEditColorNote(noteId, colorId) {
+    let notes = this.state.notes;
+    notes[noteId].colorId = colorId;
+    this.setState({
+      notes,
+    })
+  }
+
+  renderNextColor(noteId) {
     return(
-      <Modal
-          onClose={() => this.setOpenConfimDelete(false)}
-          onOpen={() => this.setOpenConfimDelete(true)}
-          open={this.state.openConfirmDelete}
-          trigger={<div className='note-close'><Icon name='close'/></div>}
-      >
-        <Modal.Header>Confirm the suppression</Modal.Header>
-        <Modal.Content>
-          <Button.Group>
-            <Button negative onClick={() => this.setOpenConfimDelete(false)}>Cancel</Button>
-            <Button.Or />
-            <Button positive onClick={() => this.handleDeleteNote(note)}>Confirm</Button>
-          </Button.Group>
-        </Modal.Content>
-      </Modal>
+      <Dropdown icon='pencil' onClick={() => this.setState({colors:this.state.colors})}>
+        <Dropdown.Menu scrolling>
+          <Dropdown.Header content='Color'/>
+          <Dropdown.Divider/>
+          {this.state.colors.map((color) => (
+            <Dropdown.Item
+              key={color.id}
+              text={color.name}
+              description={color.desc}
+              value={color.id}
+              label={{ style: {backgroundColor:color.color}, circular: true, empty: true}}
+              onClick={() => this.handleEditColorNote(noteId, color.id)}
+            />
+          ))}
+        </Dropdown.Menu>
+      </Dropdown>
     );
   }
+
+/*
+                <Icon name='sync' onClick={ () => {
+                note.colorId = (note.colorId + 1) % this.state.colors.length;
+                this.setState({
+                  notes: this.state.notes,
+                });
+              }}/>
+*/
 
   renderNote(note) {
     const style = this.state.showEditableBorder ? {border: 'solid 1px black'} : {};
@@ -281,28 +198,27 @@ export default class NotesBoard extends React.Component {
       <div key={note.id} data-grid={note.grid} style={styleColor} className='note'>
           <div className='note-header'>
             <div className='note-title'>
-              <ContentEditable
-                html={note.title}
-                onChange={ (html) => this.handleTitleChange(html, note)}
-              />
+              <TextArea
+                className='editable'
+                placeholder='New Note...'
+                rows={1}
+                maxLength={20}
+                value={note.title}
+                onChange={ (text) => this.handleTitleChange(text, note)}/>
             </div>
             <div className='note-nextColor'>
-              <Icon name='sync' onClick={ () => {
-                note.colorId = (note.colorId + 1) % this.state.colors.length;
-                this.setState({
-                  notes: this.state.notes,
-                });
-              }}/>
+              {this.renderNextColor(note.id)}
             </div>
-            {this.renderClose(note)}
+            <ConfirmModal trigger={<div className='note-close'><Icon name='close'/></div>} onConfirm={() => this.handleDeleteNote(note.id)}/>
           </div>
           <div className='note-body' style={style}>
-            <Editor
-              editorState={note.editorState}
-              onChange={editorState => this.handleTextChange(editorState, note)}
-              handleBeforeInput={ input => this.handleBeforeInput(input,note)}
-              handlePastedText={ input => this.handlePastedText(input,note)}
+            <TextArea 
+              className='editable'
               placeholder='Click here to edit...'
+              rows={note.lines-1}
+              maxLength={200}
+              value={note.text}
+              onChange={ e => this.handleTextAreaChange(e, note)}
             />
           </div>
           <div className='note-footer'>
@@ -326,12 +242,13 @@ export default class NotesBoard extends React.Component {
                 isDraggable='true'
                 isResizable='false'
                 draggableCancel='div.note-title, div.note-body, div.note-close, div.note-nextColor'
-                //compactType="horizontal"
-                //verticalCompact="false"
+                compactType="horizontal"
+                verticalCompact="false"
+                horizontalCompact="false"
               >
                 {this.state.notes.length !== 0 ? this.state.notes.map( this.renderNote):<p>pas de post-It</p>}
               </ReactGridLayout>
-              <RailCodeCouleur colors={this.state.colors}/>
+              <RailCodeCouleur notes={this.state.notes} colors={this.state.colors}/>
             </Segment>
           </Grid.Column>
         </Grid>

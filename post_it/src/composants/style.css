@@ -24,30 +24,6 @@
 }
 
 /* Note styles */
-/*
-.note {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  vertical-align: top;
-  display: inline-block;
-  font-family: Englebert, Arial;
-  color: #4b453c;
-  background: #F7E999;
-  line-height: 34px;
-  text-align: center;
-  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1), 0 2px 4px 0 rgba(0,0,0,0.1);
-}
-.note:before {
-  display: block;
-  content: "";
-  width: 130px;
-  height: 28px;
-  border-radius: 6px/18px 0;
-  position: absolute;
-}
-*/
-
 .note-title {
   color:black  ;
   text-decoration: none;
@@ -58,16 +34,25 @@
   transition: all 0.4s ease;
   position: absolute;
   margin: 5px;
+  margin-top: 10px;
+}
+
+.editable {
+  background-color: transparent;
+  border: none;
+  resize: none;
+  padding: 0px;
+  animation: blinker 1s 3;
 }
 
 @keyframes blinker {
   50% {
-    opacity: 0;
+    opacity: 0.5;
   }
 }
 
 .note-title:hover {
-  animation: blinker 1s linear infinite;
+  animation: blinker 1s 3;
 }
 
 .note {
@@ -111,14 +96,11 @@
 
 .note-body {
   padding: 0px;
-  margin: 5px;
-  font-size: 12px;
-  color: black  ;
-  line-height: 20px;
+  margin: 0px 10px;
 }
 
 .note-body:hover {
-  animation: blinker 1s linear infinite;
+  animation: blinker 1s 3;
 }
 
 .note-footer {
@@ -136,8 +118,4 @@
   left: 0;
   padding-right: 10px;
   font-size: 9px;
-}
-
-[contenteditable]:focus {
-    outline: 0px solid transparent;
 }
