@@ -1,5 +1,5 @@
 import React from 'react';
-import { Portal, TextArea, Form, Icon, Rail, Segment, List, Modal, Button, Header} from 'semantic-ui-react';
+import { TextArea, Form, Icon, Rail, Segment, List, Modal, Button, Header} from 'semantic-ui-react';
 import ConfirmModal from './ConfirmModal';
 
 import 'semantic-ui-css/semantic.min.css';
@@ -14,11 +14,13 @@ export default class RailCodeCouleur extends React.Component {
             openFormAdd: false,
             fields: {
                 name: '',
-                color: '',
+                color: 'grey',
                 desc: '',
-            },
+            }
         }
         this.handleFormAddChange = this.handleFormAddChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+        
     }
 
     setOpenFormAdd(isOpen) {
@@ -75,6 +77,25 @@ export default class RailCodeCouleur extends React.Component {
         }
     }
 
+    handleSubmit() {
+        this.setOpenFormAdd(false);
+        const color = {
+            id: this.state.colors.length,
+            color: this.state.fields.color,
+            name: this.state.fields.name,
+            desc: this.state.fields.desc,
+        }
+        this.state.colors.push(color);
+        this.setState({
+            colors: this.state.colors,
+        });
+        
+        this.setState({
+            fields: { color: 'grey', name: '', desc: '' },
+        });
+        
+    }
+
     renderFormAddModal(){
         return (
             <Modal
@@ -88,16 +109,18 @@ export default class RailCodeCouleur extends React.Component {
                     <Form onSubmit={this.handleSubmit}>
                         <Form.Group>
                             <Form.Input 
+                                required
                                 label='Name'
                                 name='name'
                                 placeholder='Name of your color' 
                                 onChange={this.handleFormAddChange}
                             />
                             <Form.Input
+                                required
                                 label='Select a Color'
                                 type='color'
                                 name='color'
-                                value='#ff00ff'
+                                value='grey'
                                 onChange={this.handleFormAddChange}
                             />
                         </Form.Group>
@@ -112,23 +135,7 @@ export default class RailCodeCouleur extends React.Component {
                             color='green'
                             content="Create"
                             icon='checkmark'
-                            onClick={ () => {
-                                this.setOpenFormAdd(false);
-                                const color = {
-                                    id: this.state.colors.length,
-                                    color: this.state.fields.color,
-                                    name: this.state.fields.name,
-                                    desc: this.state.fields.desc,
-                                }
-                                this.state.colors.push(color);
-                                this.setState({
-                                    colors: this.state.colors,
-                                });
-                                
-                                this.setState({
-                                    fields: { color: '', name: '', desc: '' },
-                                });
-                            }}
+
                             positive
                         />
                     </Form>

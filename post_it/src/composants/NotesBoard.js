@@ -41,6 +41,18 @@ export default class NotesBoard extends React.Component {
           name: "Red",
           desc: "tache très importante",
         },
+        {
+          id: 4,
+          color: "grey",
+          name: "Grey",
+          desc: "information",
+        },
+        {
+          id: 5,
+          color: "blue",
+          name: "Blue",
+          desc: "tâche quotidienne",
+        },
       ],
       notes: [
         {
@@ -119,20 +131,21 @@ export default class NotesBoard extends React.Component {
     });
   }
 
-  handleTitleChange(html, currentNote) {
+  handleTitleChange(e, currentNote) {
     const notes = this.state.notes;
-    notes.forEach((note) => {
-      if (currentNote.id === note.id) {
-        note.title = html.target.value;
-      }
-    });
-    this.setState({
-      notes
-    }, () => {
-      if (this.props.onTitleChange) {
-        this.props.onTitleChange(html, currentNote);
-      }
-    });
+    const text = e.target.value;
+    let lines = text.split('\n').length;
+    
+    if( lines < 2) {
+      notes[currentNote.id].title = text;
+      this.setState({
+        notes
+      }, () => {
+        if (this.props.onTitleChange) {
+          this.props.onTitleChange(e, currentNote);
+        }
+      });
+    }
   }
 
   handleTextAreaChange(e, currentNote) {
@@ -202,7 +215,7 @@ export default class NotesBoard extends React.Component {
                 className='editable'
                 placeholder='New Note...'
                 rows={1}
-                maxLength={20}
+                maxLength={17}
                 value={note.title}
                 onChange={ (text) => this.handleTitleChange(text, note)}/>
             </div>
@@ -211,8 +224,9 @@ export default class NotesBoard extends React.Component {
             </div>
             <ConfirmModal trigger={<div className='note-close'><Icon name='close'/></div>} onConfirm={() => this.handleDeleteNote(note.id)}/>
           </div>
-          <div className='note-body' style={style}>
+          <div className='note-body'>
             <TextArea 
+              style={style}
               className='editable'
               placeholder='Click here to edit...'
               rows={note.lines-1}
@@ -241,8 +255,8 @@ export default class NotesBoard extends React.Component {
                 width={1200}
                 isDraggable='true'
                 isResizable='false'
-                draggableCancel='div.note-title, div.note-body, div.note-close, div.note-nextColor'
-                compactType="horizontal"
+                draggableCancel='Textarea, div.note-close, div.note-nextColor'
+                //compactType="horizontal"
                 verticalCompact="false"
                 horizontalCompact="false"
               >
