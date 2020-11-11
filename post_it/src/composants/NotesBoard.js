@@ -55,6 +55,7 @@ export default class NotesBoard extends React.Component {
       contentEditable: true,
     };
     const notes = this.state.notes.concat(note);
+
     this.setState({
       // Add a new item. It must have a unique key!
       notes: notes,
