@@ -19,8 +19,7 @@ export default class RailCodeCouleur extends React.Component {
             }
         }
         this.handleFormAddChange = this.handleFormAddChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        
+        this.handleSubmit = this.handleSubmit.bind(this);  
     }
 
     setOpenFormAdd(isOpen) {
@@ -30,8 +29,7 @@ export default class RailCodeCouleur extends React.Component {
 
     handleChange(e, color) {
         const text = e.target.value;
-        const array = text.split('\n');
-        let lines = array.length;
+        let lines = text.split('\n').length;
 
         if (lines < 2) {
             color.desc=text;
