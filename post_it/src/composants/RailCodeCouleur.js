@@ -118,7 +118,7 @@ export default class RailCodeCouleur extends React.Component {
                                 label='Select a Color'
                                 type='color'
                                 name='color'
-                                value='grey'
+                                value='#808080'
                                 onChange={this.handleFormAddChange}
                             />
                         </Form.Group>
