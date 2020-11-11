@@ -1,0 +1,10 @@
+[
+  {
+    "id": 0,
+    "grid": { "x": 0, "y": 0, "w": 1, "h": 1 },
+    "title": "Hello",
+    "text": "You can edit and drag your post-it",
+    "colorId": 0,
+    "contentEditable": true
+  }
+]

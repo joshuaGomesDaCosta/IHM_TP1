@@ -9,65 +9,14 @@ import ConfirmModal from './ConfirmModal';
 import 'semantic-ui-css/semantic.min.css';
 import './style.css';
 
-localStorage.setItem('colors', JSON.stringify([
-  {
-    id: 0,
-    color: "green",
-    name: "Green",
-    desc: "tache pas importante",
-  },
-  {
-    id: 1,
-    color: "yellow",
-    name: "Yellow",
-    desc: "tache peu importante",
-  },
-  {
-    id: 2,
-    color: "orange",
-    name: "Orange",
-    desc: "tache importante",
-  },
-  {
-    id: 3,
-    color: "red",
-    name: "Red",
-    desc: "tache très importante",
-  },
-  {
-    id: 4,
-    color: "grey",
-    name: "Grey",
-    desc: "information",
-  },
-  {
-    id: 5,
-    color: "blue",
-    name: "Blue",
-    desc: "tâche quotidienne",
-  },
-]));
-
-localStorage.setItem('notes', JSON.stringify([
-  {
-    id: 0,
-    grid: { x: 0, y: 0, w: 1, h: 1 },
-    title: "Hello",
-    text: 'You can edit and drag your post-it',
-    colorId: 0,
-    //timeStamp: Moment().format(this.state.dateFormat),
-    contentEditable: true,
-  },
-]));
-
 export default class NotesBoard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       dateFormat: 'lll',
       showEditableBorder: this.props.showEditableBorder || false,
-      notes: JSON.parse(localStorage.notes),
-      colors: JSON.parse(localStorage.colors),
+      notes: require('../data/notes.json'),
+      colors: require('../data/colors.json'),
     };
 
     this.handleFormAddNote = this.handleFormAddNote.bind(this);
@@ -106,7 +55,6 @@ export default class NotesBoard extends React.Component {
       contentEditable: true,
     };
     const notes = this.state.notes.concat(note);
-    localStorage.setItem('colors', JSON.stringify(notes));
     this.setState({
       // Add a new item. It must have a unique key!
       notes: notes,

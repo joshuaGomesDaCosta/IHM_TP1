@@ -1,0 +1,38 @@
+[
+  {
+    "id": 0,
+    "color": "green",
+    "name": "Green",
+    "desc": "tache pas importante"
+  },
+  {
+    "id": 1,
+    "color": "yellow",
+    "name": "Yellow",
+    "desc": "tache peu importante"
+  },
+  {
+    "id": 2,
+    "color": "orange",
+    "name": "Orange",
+    "desc": "tache importante"
+  },
+  {
+    "id": 3,
+    "color": "red",
+    "name": "Red",
+    "desc": "tache très importante"
+  },
+  {
+    "id": 4,
+    "color": "grey",
+    "name": "Grey",
+    "desc": "information"
+  },
+  {
+    "id": 5,
+    "color": "blue",
+    "name": "Blue",
+    "desc": "tâche quotidienne"
+  }
+]
